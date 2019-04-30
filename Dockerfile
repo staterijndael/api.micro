@@ -2,6 +2,8 @@ FROM golang:1.12-alpine AS builder
 
 EXPOSE 8000
 
+ARG service_name="service-auth"
+
 # Git required for fetching the dependencies.
 RUN apk update && apk add --no-cache git ca-certificates tzdata
 
@@ -9,11 +11,13 @@ RUN apk update && apk add --no-cache git ca-certificates tzdata
 # RUN adduser -D -g '' appuser
 
 # Copy file(s)
-WORKDIR /go/src/service
-COPY main.go .
+WORKDIR $GOPATH/src/github.com/deissh/api.micro
+COPY . ./
 
 # Using vgo
-RUN go mod download
+RUN GO111MODULE=on go mod download
+
+WORKDIR $GOPATH/src/github.com/deissh/api.micro/$service_name
 
 #disable crosscompiling
 ENV CGO_ENABLED=0

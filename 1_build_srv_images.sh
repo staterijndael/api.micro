@@ -10,11 +10,7 @@ readonly tag=1.0.0
 
 for i in "${arr[@]}"
 do
-  cp -f Dockerfile "$i"
-  pushd "$i"
-  docker build -t "deissh/api-micro-$i:$tag" . --no-cache
-  rm -rf Dockerfile
-  popd
+  docker build -t "deissh/api-micro-$i:$tag" --build-arg service_name=${i} .
 done
 
 docker image ls | grep 'deissh/api-micro-'
