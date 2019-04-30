@@ -1,14 +1,12 @@
 syntax = "proto3";
 package v1;
 
-import "google/protobuf/timestamp.proto"
-
 message Token{
     int64 id = 1;
     string access_token = 2;
     string refresh_token = 3;
-    google.protobuf.Timestamp CreatedAt = 4;
-    google.protobuf.Timestamp UpdatedAt = 5;
+    string CreatedAt = 4;
+    string UpdatedAt = 5;
 }
 
 message CreateRequest{
@@ -69,8 +67,8 @@ service ServiceAuth {
     rpc Refresh(RefreshRequest) returns (RefreshResponse);
 
     // Verify access_token
-    rpc Refresh(CheckRequest) returns (CheckResponse);
+    rpc Check(CheckRequest) returns (CheckResponse);
 
     // Delete token
-    rpc Refresh(DeleteRequest) returns (DeleteResponse);
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
 }

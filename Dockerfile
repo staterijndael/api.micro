@@ -13,7 +13,7 @@ WORKDIR /go/src/service
 COPY main.go .
 
 # Using vgo
-RUN go get -d -v
+RUN go mod download
 
 #disable crosscompiling
 ENV CGO_ENABLED=0
