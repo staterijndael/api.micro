@@ -1,0 +1,76 @@
+syntax = "proto3";
+package v1;
+
+import "google/protobuf/timestamp.proto"
+
+message Token{
+    int64 id = 1;
+    string access_token = 2;
+    string refresh_token = 3;
+    google.protobuf.Timestamp CreatedAt = 4;
+    google.protobuf.Timestamp UpdatedAt = 5;
+}
+
+message CreateRequest{
+    // API version
+    string api = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message CreateResponse{
+    // API version
+    string api = 1;
+    Token token = 2;
+}
+
+message RefreshRequest{
+    // API version
+    string api = 1;
+    string access_token = 2;
+    string refresh_token = 3;
+}
+
+message RefreshResponse{
+    // API version
+    string api = 1;
+    Token token = 2;
+}
+
+message CheckRequest{
+    // API version
+    string api = 1;
+    string access_token = 2;
+}
+
+message CheckResponse{
+    // API version
+    string api = 1;
+    int64 checked = 2;
+}
+
+message DeleteRequest{
+    // API version
+    string api = 1;
+    string access_token = 2;
+}
+
+message DeleteResponse{
+    // API version
+    string api = 1;
+    int64 deleted = 2;
+}
+
+service ServiceAuth {
+    // Auth user and create access/refresh tokens
+    rpc Create(CreateRequest) returns (CreateResponse);
+
+    // Create new access/refresh tokens par and deactivate old par
+    rpc Refresh(RefreshRequest) returns (RefreshResponse);
+
+    // Verify access_token
+    rpc Refresh(CheckRequest) returns (CheckResponse);
+
+    // Delete token
+    rpc Refresh(DeleteRequest) returns (DeleteResponse);
+}
