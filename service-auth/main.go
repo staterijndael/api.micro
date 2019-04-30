@@ -1,55 +1,67 @@
 package main
 
 import (
-	"github.com/deissh/api.micro/helpers"
-	"github.com/deissh/api.micro/service-auth/common"
-	service "github.com/deissh/api.micro/service-auth/handlers"
-	"github.com/gin-gonic/gin"
-	"github.com/labstack/gommon/log"
-	"github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
-
-	_ "github.com/deissh/api.micro/service-auth/docs"
+	"github.com/google/uuid"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+	"net/http"
+	"os"
+	"time"
 )
 
-// @title Service Auth API
-// @version 1.0
-// @description Auth, create tokens, and refresh old
+type ResponseData struct {
+	Status int         `json:"status"`
+	Data   interface{} `json:"data"`
+}
 
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
+type ResponsePing struct {
+	ID          string    `json:"id,omitempty"`
+	ServiceName string    `json:"service,omitempty"`
+	Time        time.Time `json:"time,omitempty"`
+}
 
-// @host localhost:8080
-// @BasePath /
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 
-// @securityDefinitions.basic BasicAuth
-
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-func main() {
-	r := gin.Default()
-
-	conn := common.Init()
-	common.Migrate()
-
-	handlers := service.CreateHandlers(conn)
-
-	g := r.Group("/")
-	{
-		g.GET("/token.create", handlers.CreateHandler)
-		g.GET("/token.refresh", handlers.RefreshHandler)
-		g.GET("/token.remove", handlers.RemoveHandler)
-
-		g.GET("/_/health", handlers.HealthCheckHandler)
-		g.GET("/_/ping", handlers.PingHandler)
-		g.GET("/_/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+func PingHandler(c echo.Context) error {
+	ping := ResponsePing{
+		ID:          uuid.New().String(),
+		ServiceName: "service-auth",
+		Time:        time.Now().Local(),
 	}
 
-	r.Use(gin.Recovery())
+	return c.JSON(http.StatusOK, ResponseData{
+		Status: http.StatusOK,
+		Data:   ping,
+	})
+}
 
-	if err := r.Run(helpers.GetEnv("HTTP_HOST", ":8080")); err != nil {
-		log.Error(err)
+func HealthCheckHandler(c echo.Context) error {
+	return c.JSON(http.StatusOK, ResponseData{
+		Status: http.StatusOK,
+		Data: struct {
+			Alive bool `json:"alive"`
+		}{
+			Alive: true,
+		},
+	})
+}
+
+func main() {
+	e := echo.New()
+	e.Use(middleware.Logger())
+
+	g := e.Group("/api")
+	{
+		g.GET("/health", HealthCheckHandler)
+		g.GET("/ping", PingHandler)
+	}
+
+	if err := e.Start(getEnv("HTTP_HOST", ":8080")); err != nil {
+		e.Logger.Fatal(err)
 	}
 }

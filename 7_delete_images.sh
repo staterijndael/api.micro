@@ -5,7 +5,7 @@
 #version         :0.1
 #=====================================
 
-readonly -a arr=($(ls -d service-*/))
+readonly -a arr=($(ls -d */))
 readonly tag=1.0.0
 
 for i in "${arr[@]}"
