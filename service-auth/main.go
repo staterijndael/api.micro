@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/deissh/api.micro/service-auth/grpc"
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -52,6 +54,11 @@ func HealthCheckHandler(c echo.Context) error {
 }
 
 func main() {
+	_, err := grpc.ConnectUserService()
+	if err != nil {
+		log.Fatal("didnt connect: ", err)
+	}
+
 	e := echo.New()
 	e.Use(middleware.Logger())
 

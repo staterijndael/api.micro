@@ -11,5 +11,5 @@ func ConnectUserService() (*grpc.ClientConn, error) {
 		host = "localhost:11443"
 	}
 
-	return grpc.Dial(host)
+	return grpc.Dial(host, grpc.WithInsecure())
 }
