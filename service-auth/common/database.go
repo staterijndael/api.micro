@@ -1,6 +1,7 @@
 package common
 
 import (
+	"github.com/deissh/api.micro/models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/labstack/gommon/log"
@@ -22,6 +23,13 @@ func Init() *gorm.DB {
 	//db.LogMode(true)
 	DB = db
 	return DB
+}
+
+// Migrate all needed tables
+func Migrate() {
+	// create tables if not exist
+	// todo: add auto migration
+	DB.AutoMigrate(&models.Token{}, &models.User{})
 }
 
 // Using this function to get a connection, you can create your connection pool here.

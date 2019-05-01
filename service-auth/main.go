@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/deissh/api.micro/models"
 	"github.com/deissh/api.micro/service-auth/common"
 	service "github.com/deissh/api.micro/service-auth/handlers"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/swaggo/echo-swagger"
+	"github.com/gin-gonic/gin"
+	"github.com/labstack/gommon/log"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"os"
 
 	_ "github.com/deissh/api.micro/service-auth/docs"
@@ -37,27 +37,27 @@ func getEnv(key, fallback string) string {
 // @in header
 // @name Authorization
 func main() {
-	e := echo.New()
-	e.Use(middleware.Logger())
+	r := gin.Default()
 
 	conn := common.Init()
-
-	// create tables if not exist
-	// todo: add auto migration
-	conn.AutoMigrate(&models.Token{}, &models.User{})
+	common.Migrate()
 
 	handlers := service.CreateHandlers(conn)
 
-	e.GET("/docs/*", echoSwagger.WrapHandler)
-	g := e.Group("/api")
+	r.GET("/token.create", handlers.CreateHandler)
+	r.GET("/token.refresh", handlers.CreateHandler)
+	r.GET("/token.remove", handlers.CreateHandler)
+
+	g := r.Group("/_")
 	{
+		// additional methods
 		g.GET("/health", handlers.HealthCheckHandler)
 		g.GET("/ping", handlers.PingHandler)
-
-		g.POST("/auth", handlers.CreateHandler)
+		g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
+	r.Use(gin.Recovery())
 
-	if err := e.Start(getEnv("HTTP_HOST", ":8080")); err != nil {
-		e.Logger.Fatal(err)
+	if err := r.Run(getEnv("HTTP_HOST", ":8080")); err != nil {
+		log.Error(err)
 	}
 }

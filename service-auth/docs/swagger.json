@@ -4,8 +4,50 @@
         "license": {}
     },
     "paths": {
-        "/api/auth": {
-            "post": {
+        "/_/health": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show health service",
+                "operationId": "get-service-health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/_/ping": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Ping service",
+                "operationId": "ping-service",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.PingResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/token.create": {
+            "get": {
                 "description": "Generate new access_token and refresh_token",
                 "consumes": [
                     "application/json"
@@ -19,7 +61,7 @@
                     {
                         "type": "string",
                         "description": "service version",
-                        "name": "api",
+                        "name": "v",
                         "in": "query"
                     },
                     {
@@ -60,43 +102,93 @@
                 }
             }
         },
-        "/api/health": {
+        "/token.refresg": {
             "get": {
+                "description": "Generate new access_token and refresh_token",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Show health service",
-                "operationId": "get-service-health",
+                "summary": "Deactivate old token and create new",
+                "operationId": "refresh-token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "service version",
+                        "name": "v",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "refresh_token",
+                        "name": "refresh_token",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/handlers.HealthResponse"
+                            "$ref": "#/definitions/handlers.RefreshResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.ResponseData"
                         }
                     }
                 }
             }
         },
-        "/api/ping": {
+        "/token.remove": {
             "get": {
+                "description": "Remove access_token or revome all tokens from this user",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Ping service",
-                "operationId": "ping-service",
+                "summary": "Remove token or all",
+                "operationId": "remove-token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "service version",
+                        "name": "v",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "user access_token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "remove all tokens",
+                        "name": "all",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/handlers.PingResponse"
+                            "$ref": "#/definitions/handlers.RemoveResponse"
                         }
                     }
                 }
@@ -107,13 +199,13 @@
         "handlers.CreateResponse": {
             "type": "object",
             "properties": {
-                "api": {
-                    "description": "API version",
-                    "type": "string"
-                },
                 "token": {
                     "type": "object",
                     "$ref": "#/definitions/models.Token"
+                },
+                "v": {
+                    "description": "API version",
+                    "type": "string"
                 }
             }
         },
@@ -132,7 +224,7 @@
                     "type": "object",
                     "$ref": "#/definitions/handlers.Health"
                 },
-                "api": {
+                "v": {
                     "description": "API version",
                     "type": "string"
                 }
@@ -155,13 +247,38 @@
         "handlers.PingResponse": {
             "type": "object",
             "properties": {
-                "api": {
-                    "description": "API version",
-                    "type": "string"
-                },
                 "ping": {
                     "type": "object",
                     "$ref": "#/definitions/handlers.Ping"
+                },
+                "v": {
+                    "description": "API version",
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.RefreshResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.Token"
+                },
+                "v": {
+                    "description": "API version",
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.RemoveResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "v": {
+                    "description": "API version",
+                    "type": "string"
                 }
             }
         },

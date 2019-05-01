@@ -45,7 +45,7 @@ func (u *User) View() User {
 	}
 }
 
-func (u *User) setPassword(password string) error {
+func (u *User) SetPassword(password string) error {
 	if len(password) == 0 {
 		return errors.New("password should not be empty")
 	}
@@ -58,7 +58,7 @@ func (u *User) setPassword(password string) error {
 
 // Database will only save the hashed string, you should check it by util function.
 // 	if err := serModel.checkPassword("password0"); err != nil { password error }
-func (u *User) checkPassword(password string) error {
+func (u *User) CheckPassword(password string) error {
 	bytePassword := []byte(password)
 	byteHashedPassword := []byte(u.PasswordHash)
 	return bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)

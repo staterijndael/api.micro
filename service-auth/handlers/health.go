@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
@@ -11,8 +11,8 @@ type Health struct {
 
 type HealthResponse struct {
 	// API version
-	Api    string `json:"api"`
-	Health Health `json:"Health"`
+	Version string `json:"v"`
+	Health  Health `json:"Health"`
 }
 
 // HealthCheck godoc
@@ -21,10 +21,10 @@ type HealthResponse struct {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} handlers.HealthResponse
-// @Router /api/health [get]
-func (h Handler) HealthCheckHandler(c echo.Context) error {
-	return c.JSON(http.StatusOK, HealthResponse{
-		Api: "v1",
+// @Router /_/health [get]
+func (h Handler) HealthCheckHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, HealthResponse{
+		Version: "1",
 		Health: Health{
 			Alive: true,
 		},
