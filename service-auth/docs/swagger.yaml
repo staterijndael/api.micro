@@ -1,0 +1,81 @@
+basePath: /api
+definitions:
+  handlers.Health:
+    properties:
+      alive:
+        type: boolean
+    type: object
+  handlers.HealthResponse:
+    properties:
+      Health:
+        $ref: '#/definitions/handlers.Health'
+        type: object
+      api:
+        description: API version
+        type: string
+    type: object
+  handlers.Ping:
+    properties:
+      id:
+        type: string
+      service:
+        type: string
+      time:
+        type: string
+    type: object
+  handlers.PingResponse:
+    properties:
+      api:
+        description: API version
+        type: string
+      ping:
+        $ref: '#/definitions/handlers.Ping'
+        type: object
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Auth, create tokens, and refresh old
+  license: {}
+  title: Service Auth API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      operationId: get-service-health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+            type: object
+      summary: Show health service
+  /ping:
+    get:
+      consumes:
+      - application/json
+      operationId: ping-service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PingResponse'
+            type: object
+      summary: Ping service
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"

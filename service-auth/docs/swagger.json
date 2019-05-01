@@ -1,0 +1,120 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Auth, create tokens, and refresh old",
+        "title": "Service Auth API",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/health": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show health service",
+                "operationId": "get-service-health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Ping service",
+                "operationId": "ping-service",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.PingResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handlers.Health": {
+            "type": "object",
+            "properties": {
+                "alive": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handlers.HealthResponse": {
+            "type": "object",
+            "properties": {
+                "Health": {
+                    "type": "object",
+                    "$ref": "#/definitions/handlers.Health"
+                },
+                "api": {
+                    "description": "API version",
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Ping": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "service": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.PingResponse": {
+            "type": "object",
+            "properties": {
+                "api": {
+                    "description": "API version",
+                    "type": "string"
+                },
+                "ping": {
+                    "type": "object",
+                    "$ref": "#/definitions/handlers.Ping"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}
