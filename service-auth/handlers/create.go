@@ -22,6 +22,19 @@ type CreateResponse struct {
 	Token models.Token `json:"token"`
 }
 
+// TokenCreate godoc
+// @Summary Create new token
+// @Description Generate new access_token and refresh_token
+// @ID create-token
+// @Accept  json
+// @Produce  json
+// @Param api query string false "service version"
+// @Param email query string false "user email"
+// @Param password query string false "user password"
+// @Success 200 {object} handlers.CreateResponse
+// @Failure 400 {object} handlers.ResponseData
+// @Failure 500 {object} handlers.ResponseData
+// @Router /api/auth [post]
 func (h Handler) CreateHandler(c echo.Context) error {
 	// todo: verify user
 

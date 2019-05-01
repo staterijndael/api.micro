@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/deissh/api.micro/models"
+	"github.com/deissh/api.micro/service-auth/common"
 	service "github.com/deissh/api.micro/service-auth/handlers"
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/swaggo/echo-swagger"
@@ -18,13 +18,6 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
-}
-
-func ConnectDB() (*gorm.DB, error) {
-	db, err := gorm.Open("sqlite3", "test.db")
-	//defer db.Close()
-
-	return db, err
 }
 
 // @title Service Auth API
@@ -47,10 +40,7 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 
-	conn, err := ConnectDB()
-	if err != nil {
-		e.Logger.Panic(err)
-	}
+	conn := common.Init()
 
 	// create tables if not exist
 	// todo: add auto migration

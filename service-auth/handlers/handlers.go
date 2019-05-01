@@ -6,8 +6,8 @@ import (
 
 // Error default response type
 type ResponseData struct {
-	Status int         `json:"status"`
-	Data   interface{} `json:"data"`
+	Status int    `json:"status"`
+	Data   string `json:"data"`
 }
 
 type Handler struct {

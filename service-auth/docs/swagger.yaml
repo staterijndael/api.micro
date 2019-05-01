@@ -1,5 +1,13 @@
-basePath: /api
 definitions:
+  handlers.CreateResponse:
+    properties:
+      api:
+        description: API version
+        type: string
+      token:
+        $ref: '#/definitions/models.Token'
+        type: object
+    type: object
   handlers.Health:
     properties:
       alive:
@@ -32,18 +40,65 @@ definitions:
         $ref: '#/definitions/handlers.Ping'
         type: object
     type: object
-host: localhost:8080
+  handlers.ResponseData:
+    properties:
+      data:
+        type: string
+      status:
+        type: integer
+    type: object
+  models.Token:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      userId:
+        type: integer
+    type: object
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: Auth, create tokens, and refresh old
+  contact: {}
   license: {}
-  title: Service Auth API
-  version: "1.0"
 paths:
-  /health:
+  /api/auth:
+    post:
+      consumes:
+      - application/json
+      description: Generate new access_token and refresh_token
+      operationId: create-token
+      parameters:
+      - description: service version
+        in: query
+        name: api
+        type: string
+      - description: user email
+        in: query
+        name: email
+        type: string
+      - description: user password
+        in: query
+        name: password
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CreateResponse'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ResponseData'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ResponseData'
+            type: object
+      summary: Create new token
+  /api/health:
     get:
       consumes:
       - application/json
@@ -57,7 +112,7 @@ paths:
             $ref: '#/definitions/handlers.HealthResponse'
             type: object
       summary: Show health service
-  /ping:
+  /api/ping:
     get:
       consumes:
       - application/json
@@ -71,11 +126,3 @@ paths:
             $ref: '#/definitions/handlers.PingResponse'
             type: object
       summary: Ping service
-securityDefinitions:
-  ApiKeyAuth:
-    in: header
-    name: Authorization
-    type: apiKey
-  BasicAuth:
-    type: basic
-swagger: "2.0"
