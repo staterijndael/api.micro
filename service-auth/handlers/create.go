@@ -4,22 +4,22 @@ import (
 	"github.com/deissh/api.micro/models"
 	"github.com/deissh/api.micro/service-auth/helpers"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
 type CreateRequest struct {
 	// API version
-	Api      string `json:"api" form:"api" query:"api"`
-	Email    string `json:"email" form:"email" query:"email"`
-	Password string `json:"password" form:"password" query:"password"`
+	Version  string `json:"v" query:"v"`
+	Email    string `json:"email" query:"email" validate:"required,email"`
+	Password string `json:"password" query:"password" validate:"required"`
 }
 
 type CreateResponse struct {
 	// API version
-	Api   string       `json:"api"`
-	Token models.Token `json:"token"`
+	Version string       `json:"v"`
+	Token   models.Token `json:"token"`
 }
 
 // TokenCreate godoc
@@ -28,22 +28,40 @@ type CreateResponse struct {
 // @ID create-token
 // @Accept  json
 // @Produce  json
-// @Param api query string false "service version"
+// @Param v query string false "service version"
 // @Param email query string false "user email"
 // @Param password query string false "user password"
 // @Success 200 {object} handlers.CreateResponse
 // @Failure 400 {object} handlers.ResponseData
 // @Failure 500 {object} handlers.ResponseData
-// @Router /api/auth [post]
-func (h Handler) CreateHandler(c echo.Context) error {
+// @Router /token.create [Get]
+func (h Handler) CreateHandler(c *gin.Context) {
 	// todo: verify user
 
 	r := new(CreateRequest)
 	if err := c.Bind(r); err != nil {
-		return c.JSON(http.StatusBadRequest, ResponseData{
+		c.JSON(http.StatusBadRequest, ResponseData{
 			Status: http.StatusBadRequest,
 			Data:   "Params error",
 		})
+		return
+	}
+
+	var user models.User
+	if err := h.db.Where(&models.User{Email: r.Email}).First(&user); err != nil {
+		c.JSON(http.StatusBadRequest, ResponseData{
+			Status: http.StatusBadRequest,
+			Data:   "Bad password or email",
+		})
+		return
+	}
+	// сделал так как используется BCrypt на строне сервера
+	if err := user.CheckPassword(r.Password); err != nil {
+		c.JSON(http.StatusBadRequest, ResponseData{
+			Status: http.StatusBadRequest,
+			Data:   "Bad password or email",
+		})
+		return
 	}
 
 	jwttoken := jwt.New(jwt.SigningMethodHS256)
@@ -51,22 +69,27 @@ func (h Handler) CreateHandler(c echo.Context) error {
 	// Set claims
 	claims := jwttoken.Claims.(jwt.MapClaims)
 	// todo: add params
-	claims["name"] = "Jon Snow"
-	//claims["admin"] = true
+	claims["email"] = r.Email
+
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	// Generate encoded token and send it as response.
 	t, err := jwttoken.SignedString([]byte("secret"))
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, ResponseData{
+			Status: http.StatusInternalServerError,
+			Data:   "JWT signing error",
+		})
+		return
 	}
 
 	refresh, err := helpers.GenerateRandomString(128)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, ResponseData{
+		c.JSON(http.StatusInternalServerError, ResponseData{
 			Status: http.StatusInternalServerError,
 			Data:   "Refresh token generate error",
 		})
+		return
 	}
 
 	token := models.Token{
@@ -77,8 +100,8 @@ func (h Handler) CreateHandler(c echo.Context) error {
 
 	h.db.Create(&token)
 
-	return c.JSON(http.StatusOK, CreateResponse{
-		Api:   "v1",
-		Token: token,
+	c.JSON(http.StatusOK, CreateResponse{
+		Version: "1",
+		Token:   token,
 	})
 }

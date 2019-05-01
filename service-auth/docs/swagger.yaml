@@ -1,12 +1,12 @@
 definitions:
   handlers.CreateResponse:
     properties:
-      api:
-        description: API version
-        type: string
       token:
         $ref: '#/definitions/models.Token'
         type: object
+      v:
+        description: API version
+        type: string
     type: object
   handlers.Health:
     properties:
@@ -18,7 +18,7 @@ definitions:
       Health:
         $ref: '#/definitions/handlers.Health'
         type: object
-      api:
+      v:
         description: API version
         type: string
     type: object
@@ -33,12 +33,29 @@ definitions:
     type: object
   handlers.PingResponse:
     properties:
-      api:
-        description: API version
-        type: string
       ping:
         $ref: '#/definitions/handlers.Ping'
         type: object
+      v:
+        description: API version
+        type: string
+    type: object
+  handlers.RefreshResponse:
+    properties:
+      token:
+        $ref: '#/definitions/models.Token'
+        type: object
+      v:
+        description: API version
+        type: string
+    type: object
+  handlers.RemoveResponse:
+    properties:
+      status:
+        type: string
+      v:
+        description: API version
+        type: string
     type: object
   handlers.ResponseData:
     properties:
@@ -60,8 +77,36 @@ info:
   contact: {}
   license: {}
 paths:
-  /api/auth:
-    post:
+  /_/health:
+    get:
+      consumes:
+      - application/json
+      operationId: get-service-health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+            type: object
+      summary: Show health service
+  /_/ping:
+    get:
+      consumes:
+      - application/json
+      operationId: ping-service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PingResponse'
+            type: object
+      summary: Ping service
+  /token.create:
+    get:
       consumes:
       - application/json
       description: Generate new access_token and refresh_token
@@ -69,7 +114,7 @@ paths:
       parameters:
       - description: service version
         in: query
-        name: api
+        name: v
         type: string
       - description: user email
         in: query
@@ -98,31 +143,65 @@ paths:
             $ref: '#/definitions/handlers.ResponseData'
             type: object
       summary: Create new token
-  /api/health:
+  /token.refresg:
     get:
       consumes:
       - application/json
-      operationId: get-service-health
+      description: Generate new access_token and refresh_token
+      operationId: refresh-token
+      parameters:
+      - description: service version
+        in: query
+        name: v
+        type: string
+      - description: refresh_token
+        in: query
+        name: refresh_token
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.HealthResponse'
+            $ref: '#/definitions/handlers.RefreshResponse'
             type: object
-      summary: Show health service
-  /api/ping:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ResponseData'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ResponseData'
+            type: object
+      summary: Deactivate old token and create new
+  /token.remove:
     get:
       consumes:
       - application/json
-      operationId: ping-service
+      description: Remove access_token or revome all tokens from this user
+      operationId: remove-token
+      parameters:
+      - description: service version
+        in: query
+        name: v
+        type: string
+      - description: user access_token
+        in: query
+        name: access_token
+        type: string
+      - description: remove all tokens
+        in: query
+        name: all
+        type: boolean
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.PingResponse'
+            $ref: '#/definitions/handlers.RemoveResponse'
             type: object
-      summary: Ping service
+      summary: Remove token or all
