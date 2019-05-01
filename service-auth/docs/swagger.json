@@ -1,10 +1,20 @@
 {
+    "swagger": "2.0",
     "info": {
-        "contact": {},
-        "license": {}
+        "description": "Auth, create tokens, and refresh old",
+        "title": "Service Auth API",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {},
+        "version": "1.0"
     },
+    "host": "localhost:8080",
+    "basePath": "/api",
     "paths": {
-        "/_/health": {
+        "/health": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -25,7 +35,7 @@
                 }
             }
         },
-        "/_/ping": {
+        "/ping": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -45,183 +55,9 @@
                     }
                 }
             }
-        },
-        "/token.create": {
-            "get": {
-                "description": "Generate new access_token and refresh_token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Create new token",
-                "operationId": "create-token",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "service version",
-                        "name": "v",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "user email",
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "user password",
-                        "name": "password",
-                        "in": "query"
-                    },
-                    {
-                        "type": "[]string",
-                        "description": "permissions, to check on authorization and request if necessary (Example: email,notif)",
-                        "name": "scope",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.CreateResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.ResponseData"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/token.refresg": {
-            "get": {
-                "description": "Generate new access_token and refresh_token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Deactivate old token and create new",
-                "operationId": "refresh-token",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "service version",
-                        "name": "v",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "refresh_token",
-                        "name": "refresh_token",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.RefreshResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.ResponseData"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/token.remove": {
-            "get": {
-                "description": "Remove access_token or revome all tokens from this user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Remove token or all",
-                "operationId": "remove-token",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "service version",
-                        "name": "v",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "user access_token",
-                        "name": "access_token",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "remove all tokens",
-                        "name": "all",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.RemoveResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/handlers.ResponseData"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
-        "handlers.CreateResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "object",
-                    "$ref": "#/definitions/models.Token"
-                },
-                "v": {
-                    "description": "API version",
-                    "type": "string"
-                }
-            }
-        },
         "handlers.Health": {
             "type": "object",
             "properties": {
@@ -237,7 +73,7 @@
                     "type": "object",
                     "$ref": "#/definitions/handlers.Health"
                 },
-                "v": {
+                "api": {
                     "description": "API version",
                     "type": "string"
                 }
@@ -260,68 +96,25 @@
         "handlers.PingResponse": {
             "type": "object",
             "properties": {
+                "api": {
+                    "description": "API version",
+                    "type": "string"
+                },
                 "ping": {
                     "type": "object",
                     "$ref": "#/definitions/handlers.Ping"
-                },
-                "v": {
-                    "description": "API version",
-                    "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         },
-        "handlers.RefreshResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "object",
-                    "$ref": "#/definitions/models.Token"
-                },
-                "v": {
-                    "description": "API version",
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.RemoveResponse": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string"
-                },
-                "v": {
-                    "description": "API version",
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.ResponseData": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Token": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
-                    "type": "string"
-                },
-                "permissions": {
-                    "type": "string"
-                },
-                "refreshToken": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
+        "BasicAuth": {
+            "type": "basic"
         }
     }
 }

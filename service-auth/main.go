@@ -4,10 +4,12 @@ import (
 	"github.com/deissh/api.micro/models"
 	service "github.com/deissh/api.micro/service-auth/handlers"
 	"github.com/jinzhu/gorm"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/swaggo/echo-swagger"
 	"os"
 
+	_ "github.com/deissh/api.micro/service-auth/docs"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
@@ -25,6 +27,22 @@ func ConnectDB() (*gorm.DB, error) {
 	return db, err
 }
 
+// @title Service Auth API
+// @version 1.0
+// @description Auth, create tokens, and refresh old
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @host localhost:8080
+// @BasePath /api
+
+// @securityDefinitions.basic BasicAuth
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -40,10 +58,12 @@ func main() {
 
 	handlers := service.CreateHandlers(conn)
 
+	e.GET("/docs/*", echoSwagger.WrapHandler)
 	g := e.Group("/api")
 	{
 		g.GET("/health", handlers.HealthCheckHandler)
 		g.GET("/ping", handlers.PingHandler)
+
 		g.POST("/auth", handlers.CreateHandler)
 	}
 

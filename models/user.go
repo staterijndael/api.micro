@@ -17,6 +17,11 @@ type User struct {
 	Picture         string
 	Desc            string
 	Status          string
-	Badges          []string
+	Badges          []Badges
 	Password        string `gorm:"not null"`
+}
+
+type Badges struct {
+	Name string `gorm:"not null"`
+	Icon string `gorm:"not null"`
 }
