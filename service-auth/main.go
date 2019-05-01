@@ -54,11 +54,6 @@ func HealthCheckHandler(c echo.Context) error {
 }
 
 func main() {
-	_, err := grpc.ConnectUserService()
-	if err != nil {
-		log.Fatal("didnt connect: ", err)
-	}
-
 	e := echo.New()
 	e.Use(middleware.Logger())
 
