@@ -2,12 +2,18 @@ package handlers
 
 import (
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
-// Error default response type
 type ResponseData struct {
-	Status int    `json:"status"`
-	Data   string `json:"data"`
+	Status int         `json:"status"`
+	Data   interface{} `json:"data"`
+}
+
+type ResponsePing struct {
+	ID          string    `json:"id,omitempty"`
+	ServiceName string    `json:"service,omitempty"`
+	Time        time.Time `json:"time,omitempty"`
 }
 
 type Handler struct {
