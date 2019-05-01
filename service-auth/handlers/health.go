@@ -21,7 +21,7 @@ type HealthResponse struct {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} handlers.HealthResponse
-// @Router /health [get]
+// @Router /api/health [get]
 func (h Handler) HealthCheckHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, HealthResponse{
 		Api: "v1",

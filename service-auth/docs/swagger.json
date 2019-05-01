@@ -1,20 +1,66 @@
 {
-    "swagger": "2.0",
     "info": {
-        "description": "Auth, create tokens, and refresh old",
-        "title": "Service Auth API",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {},
-        "version": "1.0"
+        "contact": {},
+        "license": {}
     },
-    "host": "localhost:8080",
-    "basePath": "/api",
     "paths": {
-        "/health": {
+        "/api/auth": {
+            "post": {
+                "description": "Generate new access_token and refresh_token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create new token",
+                "operationId": "create-token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "service version",
+                        "name": "api",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "user email",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "user password",
+                        "name": "password",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.CreateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handlers.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/health": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -35,7 +81,7 @@
                 }
             }
         },
-        "/ping": {
+        "/api/ping": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -58,6 +104,19 @@
         }
     },
     "definitions": {
+        "handlers.CreateResponse": {
+            "type": "object",
+            "properties": {
+                "api": {
+                    "description": "API version",
+                    "type": "string"
+                },
+                "token": {
+                    "type": "object",
+                    "$ref": "#/definitions/models.Token"
+                }
+            }
+        },
         "handlers.Health": {
             "type": "object",
             "properties": {
@@ -105,16 +164,31 @@
                     "$ref": "#/definitions/handlers.Ping"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "ApiKeyAuth": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
         },
-        "BasicAuth": {
-            "type": "basic"
+        "handlers.ResponseData": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Token": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
         }
     }
 }

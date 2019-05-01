@@ -25,7 +25,7 @@ type PingResponse struct {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} handlers.PingResponse
-// @Router /ping [get]
+// @Router /api/ping [get]
 func (h Handler) PingHandler(c echo.Context) error {
 	ping := Ping{
 		ID:          uuid.New().String(),
