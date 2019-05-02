@@ -3,22 +3,10 @@ package main
 import (
 	"github.com/deissh/api.micro/service-auth/common"
 	service "github.com/deissh/api.micro/service-auth/handlers"
+	"github.com/deissh/api.micro/service-auth/helpers"
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
-	"github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"os"
-
-	_ "github.com/deissh/api.micro/service-auth/docs"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
-
-func getEnv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return fallback
-}
 
 // @title Service Auth API
 // @version 1.0
@@ -53,11 +41,10 @@ func main() {
 		// additional methods
 		g.GET("/health", handlers.HealthCheckHandler)
 		g.GET("/ping", handlers.PingHandler)
-		g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 	r.Use(gin.Recovery())
 
-	if err := r.Run(getEnv("HTTP_HOST", ":8080")); err != nil {
+	if err := r.Run(helpers.GetEnv("HTTP_HOST", ":8080")); err != nil {
 		log.Error(err)
 	}
 }

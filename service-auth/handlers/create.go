@@ -6,14 +6,16 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"time"
 )
 
 type CreateRequest struct {
 	// API version
 	Version  string `json:"v" query:"v"`
-	Email    string `json:"email" query:"email" validate:"required,email"`
-	Password string `json:"password" query:"password" validate:"required"`
+	Email    string `query:"email" binding:"required,email"`
+	Password string `query:"password" binding:"required"`
+	Scope    string `query:"scope" binding:"required"`
 }
 
 type CreateResponse struct {
@@ -31,6 +33,7 @@ type CreateResponse struct {
 // @Param v query string false "service version"
 // @Param email query string false "user email"
 // @Param password query string false "user password"
+// @Param scope query []string false "permissions, to check on authorization and request if necessary"
 // @Success 200 {object} handlers.CreateResponse
 // @Failure 400 {object} handlers.ResponseData
 // @Failure 500 {object} handlers.ResponseData
@@ -97,6 +100,7 @@ func (h Handler) CreateHandler(c *gin.Context) {
 		RefreshToken: refresh,
 		UserId:       1,
 	}
+	token.AddScopes(strings.Split(r.Scope, ","))
 
 	h.db.Create(&token)
 
