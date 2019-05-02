@@ -1,0 +1,28 @@
+version: '3.7'
+
+networks:
+  golang-demo:
+    external: true
+
+services:
+  service-auth:
+    image: deissh/api-micro-service-auth:1.0.0
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+
+  postgres:
+    image: postgres
+    restart: on-failure
+    volumes:
+      - /var/lib/postgresql/micro-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: XJp3(adK}WnJ{Qtk
+      POSTGRES_USER: toor
+      POSTGRES_DB: microapi
