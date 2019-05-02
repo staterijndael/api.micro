@@ -6,6 +6,11 @@ import (
 	"github.com/deissh/api.micro/service-auth/helpers"
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
+
+	_ "github.com/deissh/api.micro/service-auth/docs"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 // @title Service Auth API
@@ -17,7 +22,7 @@ import (
 // @contact.email support@swagger.io
 
 // @host localhost:8080
-// @BasePath /api
+// @BasePath /
 
 // @securityDefinitions.basic BasicAuth
 
@@ -32,16 +37,17 @@ func main() {
 
 	handlers := service.CreateHandlers(conn)
 
-	r.GET("/token.create", handlers.CreateHandler)
-	r.GET("/token.refresh", handlers.CreateHandler)
-	r.GET("/token.remove", handlers.CreateHandler)
-
-	g := r.Group("/_")
+	g := r.Group("/")
 	{
-		// additional methods
-		g.GET("/health", handlers.HealthCheckHandler)
-		g.GET("/ping", handlers.PingHandler)
+		g.GET("/token.create", handlers.CreateHandler)
+		g.GET("/token.refresh", handlers.RefreshHandler)
+		g.GET("/token.remove", handlers.RemoveHandler)
+
+		g.GET("/_/health", handlers.HealthCheckHandler)
+		g.GET("/_/ping", handlers.PingHandler)
+		g.GET("/_/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
+
 	r.Use(gin.Recovery())
 
 	if err := r.Run(helpers.GetEnv("HTTP_HOST", ":8080")); err != nil {

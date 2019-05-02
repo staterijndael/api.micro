@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.5
 	github.com/labstack/gommon v0.2.8
+	github.com/lib/pq v1.1.0
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/swaggo/gin-swagger v1.1.0
 	github.com/swaggo/swag v1.5.0

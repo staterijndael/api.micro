@@ -13,9 +13,9 @@ import (
 type CreateRequest struct {
 	// API version
 	Version  string `json:"v" query:"v"`
-	Email    string `query:"email" binding:"required,email"`
-	Password string `query:"password" binding:"required"`
-	Scope    string `query:"scope" binding:"required"`
+	Email    string `form:"email" binding:"required,email"`
+	Password string `form:"password" binding:"required"`
+	Scope    string `form:"scope" binding:"required"`
 }
 
 type CreateResponse struct {
@@ -33,16 +33,14 @@ type CreateResponse struct {
 // @Param v query string false "service version"
 // @Param email query string false "user email"
 // @Param password query string false "user password"
-// @Param scope query []string false "permissions, to check on authorization and request if necessary"
+// @Param scope query []string false "permissions, to check on authorization and request if necessary (Example: email,notif)"
 // @Success 200 {object} handlers.CreateResponse
 // @Failure 400 {object} handlers.ResponseData
 // @Failure 500 {object} handlers.ResponseData
 // @Router /token.create [Get]
 func (h Handler) CreateHandler(c *gin.Context) {
-	// todo: verify user
-
-	r := new(CreateRequest)
-	if err := c.Bind(r); err != nil {
+	var r CreateRequest
+	if err := c.Bind(&r); err != nil {
 		c.JSON(http.StatusBadRequest, ResponseData{
 			Status: http.StatusBadRequest,
 			Data:   "Params error",
@@ -71,8 +69,9 @@ func (h Handler) CreateHandler(c *gin.Context) {
 
 	// Set claims
 	claims := jwttoken.Claims.(jwt.MapClaims)
-	// todo: add params
-	claims["email"] = r.Email
+	claims["user_id"] = user.ID
+	claims["role"] = user.Role
+	claims["permissions"] = r.Scope
 
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
@@ -99,8 +98,8 @@ func (h Handler) CreateHandler(c *gin.Context) {
 		AccessToken:  t,
 		RefreshToken: refresh,
 		UserId:       1,
+		Permissions:  strings.Split(r.Scope, ","),
 	}
-	token.AddScopes(strings.Split(r.Scope, ","))
 
 	h.db.Create(&token)
 
