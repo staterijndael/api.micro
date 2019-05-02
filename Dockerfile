@@ -4,6 +4,15 @@ EXPOSE 8000
 
 ARG service_name="service-auth"
 
+#disable crosscompiling
+ENV CGO_ENABLED=0
+
+#enable go mod
+ENV GO111MODULE=on
+
+#compile linux only
+ENV GOOS=linux
+
 # Git required for fetching the dependencies.
 RUN apk update && apk add --no-cache git ca-certificates tzdata
 
@@ -14,16 +23,10 @@ RUN apk update && apk add --no-cache git ca-certificates tzdata
 WORKDIR $GOPATH/src/github.com/deissh/api.micro
 COPY . ./
 
-# Using vgo
-RUN GO111MODULE=on go mod download
+# Using go mod
+RUN go mod download
 
 WORKDIR $GOPATH/src/github.com/deissh/api.micro/$service_name
-
-#disable crosscompiling
-ENV CGO_ENABLED=0
-
-#compile linux only
-ENV GOOS=linux
 
 # Build the binary - remove debug info and compile only for linux target
 RUN go build  -ldflags '-w -s' -a -installsuffix cgo -o /go/bin/service .
