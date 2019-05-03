@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"github.com/deissh/api.micro/helpers"
 	"github.com/deissh/api.micro/models"
-	"github.com/deissh/api.micro/service-auth/helpers"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"

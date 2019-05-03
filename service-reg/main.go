@@ -2,14 +2,12 @@ package main
 
 import (
 	"github.com/deissh/api.micro/helpers"
-	"github.com/deissh/api.micro/service-auth/common"
-	service "github.com/deissh/api.micro/service-auth/handlers"
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
-	"github.com/swaggo/gin-swagger"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "github.com/deissh/api.micro/service-auth/docs"
+	_ "github.com/deissh/api.micro/service-reg/docs"
 )
 
 // @title Service Auth API
@@ -31,19 +29,14 @@ import (
 func main() {
 	r := gin.Default()
 
-	conn := common.Init()
-	common.Migrate()
-
-	handlers := service.CreateHandlers(conn)
-
 	g := r.Group("/")
 	{
-		g.GET("/token.create", handlers.CreateHandler)
-		g.GET("/token.refresh", handlers.RefreshHandler)
-		g.GET("/token.remove", handlers.RemoveHandler)
+		g.GET("/account.create")
+		g.GET("/account.activate")
+		g.GET("/account.restore")
 
-		g.GET("/_/health", handlers.HealthCheckHandler)
-		g.GET("/_/ping", handlers.PingHandler)
+		g.GET("/_/health")
+		g.GET("/_/ping")
 		g.GET("/_/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
