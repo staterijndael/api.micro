@@ -14,12 +14,17 @@ ENV GOOS=linux
 # Git required for fetching the dependencies.
 RUN apk update && apk add --no-cache git ca-certificates tzdata
 
-# Copy file(s)
+# Installing
 WORKDIR $GOPATH/src/github.com/deissh/api.micro
-COPY . ./
+
+COPY go.mod go.mod
+COPY go.sum go.sum
 
 # Using go mod
 RUN go mod download
+
+# Copy file(s)
+COPY . ./
 
 WORKDIR $GOPATH/src/github.com/deissh/api.micro/service-friends
 
