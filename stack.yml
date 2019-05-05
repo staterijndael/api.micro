@@ -43,26 +43,26 @@ services:
       placement:
         constraints: [node.role == worker]
 
-    service-friends:
-      image: deissh/api-micro-service-friends:${SERVICE_FRIENDS_TAG:-latest}
-      restart: on-failure
-      depends_on:
-        - postgres
-      environment:
-        GIN_MODE: "release"
-        DB_HOST: "postgres"
-        DB_NAME: "microapi"
-        DB_USER: "toor"
-        DB_PSW: "XJp3(adK}WnJ{Qtk"
-      deploy:
-        replicas: 2
-        update_config:
-          parallelism: 2
-          delay: 10s
-        restart_policy:
-          condition: on-failure
-        placement:
-          constraints: [node.role == worker]
+  service-friends:
+    image: deissh/api-micro-service-friends:${SERVICE_FRIENDS_TAG:-latest}
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
 
   service-messages:
     image: deissh/api-micro-service-messages:${SERVICE_MESSAGES_TAG:-latest}

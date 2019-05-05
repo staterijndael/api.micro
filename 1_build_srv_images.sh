@@ -6,7 +6,7 @@
 #=====================================
 
 readonly -a arr=($(ls -d service-*/ | xargs -n 1 basename))
-readonly tag=1.0.0
+readonly tag=latest
 
 for i in "${arr[@]}"
 do

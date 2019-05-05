@@ -7,10 +7,12 @@ docker-compose*
 */bin
 */obj
 README.md
-LICENSE
+LICENSE.md
 .vscode
 *.db
 .idea
 tests
 venv
 *.sh
+stack.yaml
+resource
