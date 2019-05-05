@@ -1,0 +1,16 @@
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+.env
+*/bin
+*/obj
+README.md
+LICENSE
+.vscode
+*.db
+.idea
+tests
+venv
+*.sh
