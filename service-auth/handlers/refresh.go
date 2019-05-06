@@ -97,7 +97,7 @@ func (h Handler) RefreshHandler(c *gin.Context) {
 		Permissions:  token.Permissions,
 	}
 
-	h.db.Create(&token)
+	h.db.Create(&newToken)
 
 	c.JSON(http.StatusOK, CreateResponse{
 		Version: "1",
