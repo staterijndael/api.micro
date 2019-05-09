@@ -1,0 +1,157 @@
+version: '3.7'
+
+services:
+  service-auth:
+    image: deissh/api-micro-service-auth:${SERVICE_AUTH_TAG:-latest}
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+
+  service-account:
+    image: deissh/api-micro-service-account:${SERVICE_ACCOUNT_TAG:-latest}
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+
+  service-friends:
+    image: deissh/api-micro-service-friends:${SERVICE_FRIENDS_TAG:-latest}
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+
+  service-messages:
+    image: deissh/api-micro-service-messages:${SERVICE_MESSAGES_TAG:-latest}
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+
+  service-notifications:
+    image: deissh/api-micro-service-notifications:${SERVICE_NOTIFICATIONS_TAG:-latest}
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+
+  service-users:
+    image: deissh/api-micro-service-users:${SERVICE_USERS_TAG:-latest}
+    restart: on-failure
+    depends_on:
+      - postgres
+    environment:
+      GIN_MODE: "release"
+      DB_HOST: "postgres"
+      DB_NAME: "microapi"
+      DB_USER: "toor"
+      DB_PSW: "XJp3(adK}WnJ{Qtk"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+
+  postgres:
+    image: postgres
+    restart: on-failure
+    volumes:
+      - /var/lib/postgresql/micro-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: XJp3(adK}WnJ{Qtk
+      POSTGRES_USER: toor
+      POSTGRES_DB: microapi
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+      placement:
+        constraints: [node.role == manager]
+
+  nginx:
+    image: deissh/api-nginx:${NGINX_TAG:-latest}
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - 80:80
+    depends_on:
+      - service-auth
