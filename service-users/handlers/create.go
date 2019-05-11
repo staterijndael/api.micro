@@ -4,7 +4,6 @@ import (
 	"github.com/deissh/api.micro/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 type CreateRequestUser struct {
@@ -14,7 +13,7 @@ type CreateRequestUser struct {
 	Email        string          `form:"email" binding:"required"`    // unique
 	Role         string          `form:"role" binding:"required"`
 	Sex          int             `form:"sex"` // 1 – female; 2 – male.
-	BDate        *time.Time      `form:"bdate"`
+	BDate        string          `form:"bdate"`
 	Picture      string          `form:"picture"`
 	Desc         string          `form:"desc"`
 	Status       string          `form:"status"`
@@ -28,11 +27,19 @@ func (h Handler) createUser(c *gin.Context) {
 
 	var user models.User
 
-	if err := h.db.Where(&models.User{Nickname: r.Nickname}).First(&user).Error; err != nil {
+	if err := h.db.Where(&models.User{Nickname: r.Nickname}).First(&user).Error; err == nil {
 
 		c.JSON(http.StatusBadRequest, ResponseData{
 			Status: http.StatusBadRequest,
 			Data:   "Nickname already registered",
+		})
+	}
+
+	if err := h.db.Where(&models.User{Email: r.Email}).First(&user).Error; err == nil {
+
+		c.JSON(http.StatusBadRequest, ResponseData{
+			Status: http.StatusBadRequest,
+			Data:   "Email already registered",
 		})
 	}
 

@@ -9,18 +9,18 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName    string `gorm:"not null"`
-	LastName     string `gorm:"not null"`
-	Nickname     string `gorm:"unique;not null;index:nickname"`
-	Email        string `gorm:"unique;not null;index:email;type:varchar(100)"`
-	Role         string `gorm:"not null;default:user"`
-	Sex          int    `gorm:"not null;default:2"` // 1 – female; 2 – male.
+	FirstName    string `gorm:"not null" json:"first_name"`
+	LastName     string `gorm:"not null" json:"last_name"`
+	Nickname     string `gorm:"unique;not null;index:nickname" json:"nickname"`
+	Email        string `gorm:"unique;not null;index:email;type:varchar(100)" json:"email"`
+	Role         string `gorm:"not null;default:user" json:"role"`
+	Sex          int    `gorm:"not null;default:2" json:"sex"` // 1 – female; 2 – male.
 	BDate        *time.Time
 	Picture      string
 	Desc         string
 	Status       string
 	Badges       []Badges
-	PasswordHash string `gorm:"not null"`
+	PasswordHash string `gorm:"not null" json:"password_hash"`
 }
 
 type Badges struct {

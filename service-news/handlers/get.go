@@ -45,11 +45,14 @@ func (h Handler) GetNews(c *gin.Context) {
 
 	if r.Limit != 0 && r.Page != 0 {
 		if r.Limit*r.Page > len(news) {
-			c.JSON(http.StatusBadRequest, ResponseData{
-				Status: http.StatusBadRequest,
-				Data:   "Array index error",
-			})
-			return
+			news = news[r.Limit*r.Page-r.Limit:]
+			if len(news) == 0 {
+				c.JSON(http.StatusBadRequest, ResponseData{
+					Status: http.StatusBadRequest,
+					Data:   "Array index error",
+				})
+				return
+			}
 		} else {
 			news = news[r.Limit*r.Page-r.Limit : r.Limit*r.Page]
 		}
