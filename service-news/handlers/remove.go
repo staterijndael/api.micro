@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/Oringik/api.micro/models"
+	"github.com/deissh/api.micro/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -9,7 +9,7 @@ import (
 type RemoveRequest struct {
 	// API version
 	Version string `json:"v" query:"v"`
-	title   string `form:"title" binding:"required"`
+	Title   string `form:"title" binding:"required"`
 }
 
 type RemoveResponse struct {
@@ -31,7 +31,7 @@ func (h Handler) RemoveNews(c *gin.Context) {
 	var news models.News
 	if err := h.db.Where(
 		&models.News{
-			title: r.title,
+			Title: r.Title,
 		},
 	).First(&news).Error; err != nil {
 		c.JSON(http.StatusBadRequest, ResponseData{

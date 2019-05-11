@@ -1,31 +1,38 @@
 package handlers
 
 import (
-	"github.com/Oringik/api.micro/models"
+	"github.com/deissh/api.micro/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type RefreshRequest struct {
+type RefRequest struct {
 	// API version
 	Version    string `form:"v"`
-	Title      string `form:"title" binding:"required"`
-	Annotation string `form:"title" binding:"required"`
-	Body       string `gorm:"form:"body" required:"required"`
+	Title      string `form:"title"`
+	Annotation string `form:"annotation"`
+	Body       string `form:"body"`
 	Author_id  string `form:"author_id"`
-	Preview    string `form:"preview" binding:"required"`
+	Preview    string `form:"preview"`
 	Background string `form:"background"`
 	Types      string `form:"types"`
 }
 
-type RefreshResponse struct {
+type RefResponse struct {
 	// API version
-	Version string       `json:"v"`
-	Token   models.Token `json:"token"`
+	Version string      `json:"v"`
+	News    models.News `json:"news"`
+}
+
+func checkNull(old string, new string) string {
+	if new == "" {
+		new = old
+	}
+	return new
 }
 
 func (h Handler) RefreshNews(c *gin.Context) {
-	var r RefreshRequest
+	var r RefRequest
 	if err := c.Bind(&r); err != nil {
 		c.JSON(http.StatusBadRequest, ResponseData{
 			Status: http.StatusBadRequest,
@@ -47,8 +54,6 @@ func (h Handler) RefreshNews(c *gin.Context) {
 		return
 	}
 
-	h.db.Delete(&news)
-
 	var author models.User
 
 	err := h.db.Where(&models.User{Nickname: r.Author_id}).First(&author)
@@ -60,22 +65,20 @@ func (h Handler) RefreshNews(c *gin.Context) {
 		return
 	}
 
-	var n RefreshRequest
-
 	newNews := models.News{
-		Title:      n.Title,
-		Annotation: n.Annotation,
-		Body:       n.Body,
+		Title:      checkNull(news.Title, r.Title),
+		Annotation: checkNull(news.Annotation, r.Annotation),
+		Body:       checkNull(news.Body, r.Body),
 		Author_id:  author,
-		Preview:    n.Preview,
-		Background: n.Background,
-		Types:      n.Types,
+		Preview:    checkNull(news.Preview, r.Preview),
+		Background: checkNull(news.Background, r.Background),
+		Types:      checkNull(news.Types, r.Types),
 	}
 
 	h.db.Create(&newNews)
 
-	c.JSON(http.StatusOK, RefreshResponse{
+	c.JSON(http.StatusOK, RefResponse{
 		Version: "1",
-		Token:   newNews,
+		News:    newNews,
 	})
 }

@@ -2,14 +2,14 @@ package main
 
 import (
 	"github.com/deissh/api.micro/helpers"
-	"github.com/deissh/api.micro/service-friends/common"
-	service "github.com/deissh/api.micro/service-friends/handlers"
+	"github.com/deissh/api.micro/service-news/common"
+	service "github.com/deissh/api.micro/service-news/handlers"
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "github.com/deissh/api.micro/service-friends/docs"
+	_ "github.com/deissh/api.micro/service-news/docs"
 )
 
 // @title Service Users API
@@ -38,17 +38,10 @@ func main() {
 
 	g := r.Group("/")
 	{
-		g.GET("/friends.add")
-		g.GET("/friends.addList")
-		g.GET("/friends.areFriends")
-		g.GET("/friends.delete")
-		g.GET("/friends.deleteAllRequests")
-		g.GET("/friends.deleteList")
-		g.GET("/friends.get")
-		g.GET("/friends.getOnline")
-		g.GET("/friends.getRequests")
-		g.GET("/friends.getSuggestions")
-		g.GET("/friends.search")
+		g.GET("/news.create", handlers.CreateNews)
+		g.GET("/news.get", handlers.GetNews)
+		g.GET("/news.refresh", handlers.RefreshNews)
+		g.GET("/news.remove", handlers.RemoveNews)
 
 		g.GET("/_/health", handlers.HealthCheckHandler)
 		g.GET("/_/ping", handlers.PingHandler)

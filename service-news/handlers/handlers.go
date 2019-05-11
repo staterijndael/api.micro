@@ -8,6 +8,7 @@ import (
 type ResponseData struct {
 	Status int    `json:"status"`
 	Data   string `json:"data"`
+	Author string
 }
 
 type Handler struct {

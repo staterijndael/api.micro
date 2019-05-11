@@ -18,7 +18,7 @@ var DB *gorm.DB
 func Init() *gorm.DB {
 	host := helpers.GetEnv("DB_HOST", "127.0.0.1")
 	user := helpers.GetEnv("DB_USER", "zikal")
-	dbName := helpers.GetEnv("DB_NAME", "microapi")
+	dbName := helpers.GetEnv("DB_NAME", "anibe")
 	psw := helpers.GetEnv("DB_PSW", "123")
 
 	db, err := gorm.Open("postgres", "sslmode=disable host="+host+" user="+user+" dbname="+dbName+" password="+psw)

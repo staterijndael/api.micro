@@ -6,13 +6,13 @@ import (
 
 type News struct {
 	gorm.Model
-	Title      string `gorm:"not null"`
-	Annotation string `gorm:"not null"`
-	Body       string `gorm:"not null`
-	Author_id  User   `gorm:"default:Anon"`
-	Preview    string `gorm:"not null"`
-	Background string `gorm:"default:null"`
-	Types      string `gorm:"default:Системные"`
+	Title      string `gorm:"not null" json:"title"`
+	Annotation string `gorm:"not null" json:"annotation"`
+	Body       string `gorm:"not null	json:"body"`
+	Author_id  User   `default:"Anon"	json:"author_id"`
+	Preview    string `gorm:"not null" json:"preview"`
+	Background string `default:"null" json:"background"`
+	Types      string `default:"Системные" json:"types"`
 }
 
 func (n *News) View() News {
