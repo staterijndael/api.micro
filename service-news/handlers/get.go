@@ -30,7 +30,7 @@ func (h Handler) GetNews(c *gin.Context) {
 		return
 	}
 
-	news := []models.News{}
+	var news []models.News
 	if r.Q == "" {
 		h.db.Find(&news)
 	} else {
@@ -45,13 +45,21 @@ func (h Handler) GetNews(c *gin.Context) {
 
 	if r.Limit != 0 && r.Page != 0 {
 		if r.Limit*r.Page > len(news) {
-			news = news[r.Limit*r.Page-r.Limit:]
-			if len(news) == 0 {
+			if r.Limit*r.Page-r.Limit > len(news) {
 				c.JSON(http.StatusBadRequest, ResponseData{
 					Status: http.StatusBadRequest,
 					Data:   "Array index error",
 				})
 				return
+			} else {
+				news = news[r.Limit*r.Page-r.Limit:]
+				if len(news) == 0 {
+					c.JSON(http.StatusBadRequest, ResponseData{
+						Status: http.StatusBadRequest,
+						Data:   "Array index error",
+					})
+					return
+				}
 			}
 		} else {
 			news = news[r.Limit*r.Page-r.Limit : r.Limit*r.Page]

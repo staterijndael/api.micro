@@ -38,11 +38,12 @@ func main() {
 
 	g := r.Group("/")
 	{
-		g.GET("/users.get")
+		g.GET("/users.get", handlers.GetUser)
 		g.GET("/users.getFollowers")
 		g.GET("/users.getSubscriptions")
 		g.GET("/users.report")
 		g.GET("/users.search")
+		g.GET("/users.create", handlers.CreateUser)
 
 		g.GET("/_/health", handlers.HealthCheckHandler)
 		g.GET("/_/ping", handlers.PingHandler)

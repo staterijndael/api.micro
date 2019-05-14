@@ -15,7 +15,7 @@ type User struct {
 	Email        string `gorm:"unique;not null;index:email;type:varchar(100)" json:"email"`
 	Role         string `gorm:"not null;default:user" json:"role"`
 	Sex          int    `gorm:"not null;default:2" json:"sex"` // 1 – female; 2 – male.
-	BDate        *time.Time
+	BDate        time.Time
 	Picture      string
 	Desc         string
 	Status       string
