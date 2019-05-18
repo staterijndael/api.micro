@@ -9,7 +9,7 @@ import (
 type RefRequest struct {
 	// API version
 	Version    string `form:"v"`
-	Title      string `form:"title"`
+	Title      string `form:"title" binding:"required"`
 	Annotation string `form:"annotation"`
 	Body       string `form:"body"`
 	Author_id  string `form:"author_id"`
@@ -49,18 +49,7 @@ func (h Handler) RefreshNews(c *gin.Context) {
 	).First(&news).Error; err != nil {
 		c.JSON(http.StatusBadRequest, ResponseData{
 			Status: http.StatusBadRequest,
-			Data:   "News did not find",
-		})
-		return
-	}
-
-	var author models.User
-
-	err := h.db.Where(&models.User{Nickname: r.Author_id}).First(&author)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, ResponseData{
-			Status: http.StatusBadRequest,
-			Data:   "Bad user nickname",
+			Data:   "News  not founded",
 		})
 		return
 	}
@@ -69,11 +58,13 @@ func (h Handler) RefreshNews(c *gin.Context) {
 		Title:      checkNull(news.Title, r.Title),
 		Annotation: checkNull(news.Annotation, r.Annotation),
 		Body:       checkNull(news.Body, r.Body),
-		Author_id:  author,
+		Author_id:  news.Author_id,
 		Preview:    checkNull(news.Preview, r.Preview),
 		Background: checkNull(news.Background, r.Background),
 		Types:      checkNull(news.Types, r.Types),
 	}
+
+	h.db.Delete(&news)
 
 	h.db.Create(&newNews)
 

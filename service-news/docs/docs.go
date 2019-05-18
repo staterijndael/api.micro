@@ -59,40 +59,46 @@ var doc = `{
                 }
             }
         },
-        "/token.create": {
+        "/news.create": {
             "get": {
-                "description": "Generate new access_token and refresh_token",
+                "description": "Generate new news",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Create new token",
-                "operationId": "create-token",
+                "summary": "Create new news",
+                "operationId": "create-news",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "service version",
-                        "name": "v",
+                        "description": "title name",
+                        "name": "title",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "user email",
-                        "name": "email",
+                        "description": "annotations",
+                        "name": "annotation",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "user password",
-                        "name": "password",
+                        "description": "author nickname of the post",
+                        "name": "author_id",
                         "in": "query"
                     },
                     {
-                        "type": "[]string",
-                        "description": "permissions, to check on authorization and request if necessary (Example: email,notif)",
-                        "name": "scope",
+                        "type": "string",
+                        "description": "picture which will be displayed in the windows of your news",
+                        "name": "preview",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "background",
+                        "name": "background",
                         "in": "query"
                     }
                 ],
@@ -121,28 +127,46 @@ var doc = `{
                 }
             }
         },
-        "/token.refresg": {
+        "/news.refresh": {
             "get": {
-                "description": "Generate new access_token and refresh_token",
+                "description": "Change settings of given news",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Deactivate old token and create new",
-                "operationId": "refresh-token",
+                "summary": "Change any setting for news which was selected",
+                "operationId": "refresh-news",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "service version",
-                        "name": "v",
+                        "description": "title name",
+                        "name": "title",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "refresh_token",
-                        "name": "refresh_token",
+                        "description": "annotations",
+                        "name": "annotation",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "author nickname of the post",
+                        "name": "author_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "picture which will be displayed in the windows of your news",
+                        "name": "preview",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "background",
+                        "name": "background",
                         "in": "query"
                     }
                 ],
@@ -191,16 +215,10 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "user access_token",
-                        "name": "access_token",
+                        "description": "title name",
+                        "name": "title",
                         "in": "query"
                     },
-                    {
-                        "type": "boolean",
-                        "description": "remove all tokens",
-                        "name": "all",
-                        "in": "query"
-                    }
                 ],
                 "responses": {
                     "200": {
@@ -227,7 +245,7 @@ var doc = `{
             "properties": {
                 "token": {
                     "type": "object",
-                    "$ref": "#/definitions/models.Token"
+                    "$ref": "#/definitions/models.News"
                 },
                 "v": {
                     "description": "API version",
@@ -283,15 +301,15 @@ var doc = `{
                 }
             }
         },
-        "handlers.RefreshResponse": {
+        "handlers.RefResponse": {
             "type": "object",
             "properties": {
-                "token": {
+                "News": {
                     "type": "object",
-                    "$ref": "#/definitions/models.Token"
+                    "$ref": "#/definitions/models.News"
                 },
-                "v": {
-                    "description": "API version",
+                "Status": {
+                    "description": "Current status",
                     "type": "string"
                 }
             }
@@ -319,20 +337,29 @@ var doc = `{
                 }
             }
         },
-        "models.Token": {
+        "models.News": {
             "type": "object",
             "properties": {
-                "accessToken": {
+                "Title": {
                     "type": "string"
                 },
-                "permissions": {
+                "Annotation": {
                     "type": "string"
                 },
-                "refreshToken": {
+                "Body": {
                     "type": "string"
                 },
-                "userId": {
-                    "type": "integer"
+                "Author_id": {
+                    "type": "User"
+                },
+                "Preview": {
+                    "type": "string"
+                },
+                "Background": {
+                    "type": "string"
+                },
+                "Types": {
+                    "type": "string"
                 }
             }
         }

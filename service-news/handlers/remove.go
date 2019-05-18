@@ -40,7 +40,7 @@ func (h Handler) RemoveNews(c *gin.Context) {
 		})
 		return
 	}
-	// remove token
+	// remove news
 	h.db.Delete(&news)
 
 	c.JSON(http.StatusOK, RemoveResponse{

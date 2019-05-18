@@ -16,6 +16,12 @@ type CreateNewsR struct {
 	Types      string `form:"types"`
 }
 
+type uCreateResponse struct {
+	// API version
+	Version string      `json:"v"`
+	News    models.News `json:"news"`
+}
+
 func (h Handler) CreateNews(c *gin.Context) {
 	var r CreateNewsR
 	if err := c.Bind(&r); err != nil {
@@ -26,10 +32,12 @@ func (h Handler) CreateNews(c *gin.Context) {
 		return
 	}
 
-	type CreateResponse struct {
-		// API version
-		Version string      `json:"v"`
-		News    models.News `json:"news"`
+	if err := h.db.Where(&models.News{Title: r.Title}); err == nil {
+		c.JSON(http.StatusBadRequest, ResponseData{
+			Status: http.StatusBadRequest,
+			Data:   "Title already exist",
+		})
+		return
 	}
 
 	var author models.User
@@ -72,7 +80,7 @@ func (h Handler) CreateNews(c *gin.Context) {
 
 	h.db.Create(&news)
 
-	c.JSON(http.StatusOK, CreateResponse{
+	c.JSON(http.StatusOK, uCreateResponse{
 		Version: "1",
 		News:    news,
 	})
